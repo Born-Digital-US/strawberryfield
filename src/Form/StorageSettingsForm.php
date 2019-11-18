@@ -52,6 +52,15 @@ class StorageSettingsForm extends ConfigFormBase {
       '#required' => TRUE
     ];
 
+    $form['file_tmp_scheme'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Storage Scheme for Temporary Uploaded Files'),
+      '#description' => $this->t('Please provide your prefered Storage Scheme for Temporary uploaded Strawberryfield managed Files'),
+      '#default_value' => $config->get('file_tmp_scheme'),
+      '#options' => $scheme_options,
+      '#required' => TRUE
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -69,6 +78,7 @@ class StorageSettingsForm extends ConfigFormBase {
     $this->config('strawberryfield.storage_settings')
       ->set('file_scheme', $form_state->getValue('file_scheme'))
       ->set('object_file_scheme', $form_state->getValue('object_file_scheme'))
+      ->set('file_tmp_scheme', $form_state->getValue('file_tmp_scheme'))
       ->save();
 
     parent::submitForm($form, $form_state);

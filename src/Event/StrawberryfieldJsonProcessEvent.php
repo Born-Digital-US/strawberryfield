@@ -12,7 +12,7 @@ class StrawberryfieldJsonProcessEvent extends Event {
   /**
    * The RAW JSON
    *
-   * Should hopefully never modified during an Event life clycle
+   * Should hopefully never modified during an Event life cycle
    *
    * @var array
    */

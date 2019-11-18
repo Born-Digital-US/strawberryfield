@@ -102,6 +102,7 @@ class StrawberryfieldEventPresaveSubscriberVocabCreator extends StrawberryfieldE
                     'name' => $path,
                     'parent' => $parent_id,
                     'field_jsonpath' => $breadcrumb,
+                    'field_vocab_jsonpath' => $breadcrumb,
                   ]
                 );
                 $newlycreatedcount++;
