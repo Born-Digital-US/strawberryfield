@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 use Datetime;
 
 /**
- * Event subscriber for SBF bearing entity presave event.
+ * Event subscriber for SBF bearing entity insert event.
  */
 class StrawberryfieldEventInsertSubscriberDepositDO extends StrawberryfieldEventInsertSubscriber {
 
@@ -41,9 +41,16 @@ class StrawberryfieldEventInsertSubscriberDepositDO extends StrawberryfieldEvent
   /**
    * The Storage Destination Scheme.
    *
-   * @var string;
+   * @var string|null
    */
   protected $destinationScheme = NULL;
+
+  /**
+   * The Storage Destination Relative Path.
+   *
+   * @var string|null
+   */
+  protected $destinationRelativePath = NULL;
 
   /**
    * The Strawberryfield File Persister Service
@@ -94,6 +101,9 @@ class StrawberryfieldEventInsertSubscriberDepositDO extends StrawberryfieldEvent
     $this->loggerFactory = $logger_factory;
     $this->strawberryfilepersister = $strawberry_filepersister;
     $this->account = $account;
+    $this->destinationRelativePath = $config_factory->get(
+        'strawberryfield.storage_settings'
+      )->get('object_file_path') ??  $this->strawberryfilepersister::DEFAULT_OBJECT_STORAGE_FILE_PATH;
   }
 
   /**
@@ -119,7 +129,7 @@ class StrawberryfieldEventInsertSubscriberDepositDO extends StrawberryfieldEvent
     );
     //@TODO right now JSON API does not expose its serialization publicly
     // We can use JSONAPI_Extras module for this
-    $path = $this->destinationScheme . '://dostorage/' . $entity->uuid();
+    $path = $this->destinationScheme . '://' . $this->destinationRelativePath . '/' . $entity->uuid();
     $success = FALSE;
     if ($full_node_data) {
       $filename_full_node = 'node_' . $entity->bundle() . '_' . $entity->uuid() . '.json';
@@ -194,5 +204,4 @@ class StrawberryfieldEventInsertSubscriberDepositDO extends StrawberryfieldEvent
       );
     }
   }
-
 }
