@@ -8,6 +8,7 @@
 namespace Drupal\strawberryfield\Plugin\DataType;
 use DateTime;
 use Drupal\Core\TypedData\Plugin\DataType\ItemList;
+use Drupal\search_api_solr\Plugin\search_api\data_type\value\DateRangeValue;
 use Drupal\strawberryfield\Plugin\Field\FieldType\StrawberryFieldItem;
 use Drupal\strawberryfield\Tools\StrawberryfieldJsonHelper;
 use EDTF\EdtfFactory;
@@ -60,6 +61,7 @@ class StrawberryValuesViaJmesPathFromJson extends ItemList {
       // jmespath's separated by comma.
       $jmespaths = $definition['settings']['jsonkey'];
       $is_date = $definition['settings']['is_date'] ?? FALSE;
+      $date_range = $definition['settings']['date_range'] ?? FALSE;
       $jmespath_array = array_map('trim', explode(',', $jmespaths));
       $jmespath_result = [];
       foreach ($jmespath_array as $jmespath) {
@@ -166,8 +168,18 @@ class StrawberryValuesViaJmesPathFromJson extends ItemList {
         }
         $values = array_unique($values_parsed);
         $values = array_filter(array_values($values));
+        if ($date_range && !empty($values)) {
+          // Get min and max dates from the $values array
+          $min = min($values);
+          $max = max($values);
+          // None of these three ways of setting the value works.
+          $values = [new DateRangeValue($min, $max)];
+//          $values = ['value' => $min, 'end_value' => $max];
+//          $values = [['value' => $min, 'end_value' => $max]];
+
+        }
       }
-      $this->processed = array_values($values);
+      $this->processed = ($is_date && $date_range) ? $values : array_values($values);
       $this->list = [];
       foreach ($this->processed as $delta => $item) {
         $this->list[$delta] = $this->createItem($delta, $item);

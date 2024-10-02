@@ -196,6 +196,7 @@ use Drupal\strawberryfield\Tools\StrawberryfieldJsonHelper;
            }
            else {
              $is_date = $plugin_config_entity_configs[$processor_class][$property]['is_date'] ?? FALSE;
+             $date_range = $plugin_config_entity_configs[$processor_class][$property]['date_range'] ?? FALSE;
              $properties[$property] = ListDataDefinition::create(
                $item_types[$processor_class]
              )
@@ -205,6 +206,7 @@ use Drupal\strawberryfield\Tools\StrawberryfieldJsonHelper;
                ->setInternal(TRUE)
                ->setSetting('jsonkey', $keyname)
                ->setSetting('is_date', $is_date)
+               ->setSetting('date_range', $date_range)
                ->setReadOnly(TRUE);
            }
          }
